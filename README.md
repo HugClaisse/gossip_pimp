@@ -1,4 +1,4 @@
-# THP: S6J1
+# Pimp My Gossip
 
 This is a new iteration of The Gossip Project on Rails with a full MVC
 structure.
