@@ -1,0 +1,13 @@
+a.userlink,
+a.listlink{
+  text-decoration: none;
+  color: #000000;
+}
+
+a.userlink {
+  font-weight: normal;
+}
+
+a.userlink:hover {
+  text-decoration: underline;
+}

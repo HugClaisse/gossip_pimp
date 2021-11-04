@@ -1,0 +1,71 @@
+<% if @gossip.errors.any? %>
+<div class="alert alert-danger" role="alert">
+  <p>Le Gossip n’a pas pu être créé pour la/les raison(s) suivante(s) :</p>
+  <ul>
+    <% @gossip.errors.full_messages.each do |message| %>
+      <li><%= message %></li>
+    <% end %>
+  </ul>
+</div>
+<% end %>
+
+<!-- Jumbotron -->
+<div
+  class="p-5 text-center bg-image rounded-3"
+  style="
+    background-image: url('https://images.pexels.com/photos/6936406/pexels-photo-6936406.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=750&amp;w=1260');
+    height: 1000px;
+  "
+>
+  <div class="mask" style="background-color: rgba(0, 0, 0, 0.6);">
+    <div class="d-flex justify-content-center align-items-center h-100">
+      <div class="text-white">
+        <h1 class="mb-3">The Gossip Project</h1>
+        <h4 class="mb-3">Balance ton potin !!</h4>
+        <a class="btn btn-outline-light btn-lg" href="http://localhost:3000/user/new" role="button">Inscris-toi</a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Jumbotron -->
+  <% if User.find_by(id: session[:user_id]) %>
+
+    <%= form_tag url_for(action: 'create'), method: "post" do %>    
+      <div class="form-group col col-lg-6">
+          <%= text_field_tag 'title', nil, placeholder: 'Titre', class: 'form-control mb-3' %>
+          <%= text_area_tag 'content', nil, placeholder: "À quoi pensez-vous #{current_user.first_name} ?", class: 'form-control mb-3' %>
+        <%= submit_tag "Envoyer", class: 'btn btn-sm btn-dark mb-5' %>
+      </div>
+    <% end %>
+
+
+  <% end %>
+      <% @all_gossips.order("updated_at","created_at").reverse.each do |gossip| %>
+        <div class="col col-lg-6">
+          <div class="list-group-item list-group-item-action">
+            <%= link_to gossip_path(gossip.id), :class => 'listlink', :action => 'go' do %>
+            <p><b><%= gossip.user.first_name %> <%= gossip.user.last_name %></b> <small class="text-muted"><%= time_ago_in_words(gossip.created_at) %> 
+            <div>
+            <% if gossip.updated_at > gossip.created_at %>
+                · màj. <%= time_ago_in_words(gossip.updated_at) %>
+              <% end %>
+            </small></p>
+            <p class="h5"><%= gossip.title %></p>
+            <p><%= gossip.content.truncate(100) %></p>
+          </div>
+        <% end %>
+        <p><%= link_to "#{gossip.comments.count} commentaires", gossip_path(gossip.id), :class => 'userlink' %> ·  
+        <% if current_user && liked?(gossip, current_user) %>
+          <%= link_to "#{gossip.likes.count} likes", gossip_like_path(gossip.id, Like.find_by(user_id: current_user.id, gossip_id: gossip.id)), method: "delete", :class => 'userlink' %></p>
+        <% elsif current_user %>
+          <%= link_to "#{gossip.likes.count} likes", gossip_like_index_path(gossip.id), method: "post", :class => 'userlink' %></p>
+        <% else %>
+          <%= link_to "#{gossip.likes.count} likes", nil, :class => 'userlink' %></p>
+        <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  </div>
+
